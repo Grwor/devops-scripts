@@ -1,0 +1,60 @@
+---
+- name: Setup Jenkins Master
+  hosts: jenkins_master
+  become: yes
+  tasks:
+    - name: Update apt
+      apt:
+        update_cache: yes
+
+    - name: Install Java and Apache
+      apt:
+        name:
+          - openjdk-21-jre
+          - apache2
+        state: present
+
+    - name: Start Apache
+      service:
+        name: apache2
+        state: started
+        enabled: yes
+
+    - name: Download Jenkins
+      get_url:
+        url: https://get.jenkins.io/war-stable/latest/jenkins.war
+        dest: /opt/jenkins.war
+
+- name: Setup Jenkins Slave
+  hosts: jenkins_slave
+  become: yes
+  tasks:
+    - name: Update apt
+      apt:
+        update_cache: yes
+
+    - name: Install Java
+      apt:
+        name: openjdk-21-jre
+        state: present
+
+- name: Setup Web Server
+  hosts: web_server
+  become: yes
+  tasks:
+    - name: Update apt
+      apt:
+        update_cache: yes
+
+    - name: Install Java and Apache
+      apt:
+        name:
+          - openjdk-11-jdk
+          - apache2
+        state: present
+
+    - name: Start Apache
+      service:
+        name: apache2
+        state: started
+        enabled: yes
